@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/youtube"; // Fallback to local DB
+const mongoURI = process.env.MONGO_URI
 
 const connectDB = async () => {
     try {
