@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const connectDB = require("./mongoose");
+const authRoutes = require("./routes/auth"); // Import Register API
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -9,12 +11,12 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Test Route
-app.get("/", (req, res) => {
-  res.send("Student Dashboard Backend is running...");
-});
+// Connect to MongoDB
+connectDB();
 
-// Start Server
+// Use Authentication Routes
+app.use("/api", authRoutes);
+
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
