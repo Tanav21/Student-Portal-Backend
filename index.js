@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const connectDB = require("./mongoose");
-const authRoutes = require("./routes/auth");
+const authRoute = require("./routes/auth");
 const profileRoutes = require("./routes/profile");
 const courseRoutes = require("./routes/course"); // ✅ Add course routes
 
@@ -16,7 +16,7 @@ app.use(express.json());
 connectDB();
 
 // Routes
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRoute);
 app.use("/api/profile", profileRoutes);
 app.use("/api/courses", courseRoutes); // ✅ Added course routes
 
