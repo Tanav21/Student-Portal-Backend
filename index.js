@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const connectDB = require("./mongoose");
-const authRoutes = require("./routes/auth");
+const authRoutes = require("./routes/Auth");
 const profileRoutes = require("./routes/profile");
 const courseRoutes = require("./routes/course"); // ✅ Add course routes
 
@@ -22,5 +22,5 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/courses", courseRoutes); // ✅ Added course routes
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
