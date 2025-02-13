@@ -1,5 +1,6 @@
 const express = require("express");
 const Course = require("../models/course");
+const User = require("../models/user");
 const auth = require("../middlewares/auth"); // Protect routes with authentication
 
 const router = express.Router();
@@ -11,7 +12,6 @@ router.post("/", auth, async (req, res) => {
     try {
         const { coursename, description, brief, amount, courseImage } = req.body;
 
-        // Check if all fields are provided
         if (!coursename || !description || !brief || !amount) {
             return res.status(400).json({ message: "All fields are required" });
         }
@@ -48,6 +48,29 @@ router.get("/", async (req, res) => {
         });
     } catch (error) {
         console.error("Error fetching courses:", error.message);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+/**
+ * @route   GET /api/courses/applied
+ * @desc    Get all courses that the logged-in student has applied for
+ * @access  Private (Requires Authentication)
+ */
+router.get("/applied", auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).populate("appliedCourses");
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json({
+            message: "Applied courses fetched successfully",
+            courses: user.appliedCourses
+        });
+    } catch (error) {
+        console.error("Error fetching applied courses:", error.message);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });

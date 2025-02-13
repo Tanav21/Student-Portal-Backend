@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true },
     phone: { type: String, default: "" },
     address: { type: String, default: "" },
-    skills: { type: String, default: "" }, // Skills as a single string
+    skills: { type: String, default: "" },
     image: { type: String },
     dob: { type: Date },
     education: [
@@ -15,7 +15,8 @@ const UserSchema = new mongoose.Schema({
             institution: { type: String, required: true },
             year: { type: Number }
         }
-    ]
+    ],
+    appliedCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }] // New Field to Track Applied Courses
 });
 
 module.exports = mongoose.model("User", UserSchema);

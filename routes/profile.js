@@ -1,5 +1,6 @@
 const express = require("express");
 const User = require("../models/user");
+const Course = require("../models/course");
 const auth = require("../middlewares/auth"); // Middleware for JWT authentication
 
 const router = express.Router();
@@ -49,12 +50,10 @@ router.put("/:id", auth, async (req, res) => {
             return res.status(404).json({ message: "Student not found" });
         }
 
-        // Ensure the user cannot update their email
         if (req.body.email && req.body.email !== user.email) {
             return res.status(400).json({ message: "Email cannot be changed" });
         }
 
-        // Update only if fields are provided
         user.name = name || user.name;
         user.phone = phone || user.phone;
         user.address = address || user.address;
@@ -70,7 +69,7 @@ router.put("/:id", auth, async (req, res) => {
             profile: {
                 id: user.id,
                 name: user.name,
-                email: user.email, // Email remains unchanged
+                email: user.email,
                 phone: user.phone,
                 address: user.address,
                 skills: user.skills,
@@ -82,6 +81,41 @@ router.put("/:id", auth, async (req, res) => {
 
     } catch (error) {
         console.error("Error updating profile:", error.message);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+/**
+ * @route   POST /api/profile/apply/:courseId
+ * @desc    Apply for a course
+ * @access  Private (Requires Authentication)
+ */
+router.post("/apply/:courseId", auth, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const courseId = req.params.courseId;
+
+        const user = await User.findById(userId);
+        const course = await Course.findById(courseId);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (!course) {
+            return res.status(404).json({ message: "Course not found" });
+        }
+
+        if (user.appliedCourses.includes(courseId)) {
+            return res.status(400).json({ message: "You have already applied for this course" });
+        }
+
+        user.appliedCourses.push(courseId);
+        await user.save();
+
+        res.json({ message: "Successfully applied for the course", appliedCourses: user.appliedCourses });
+    } catch (error) {
+        console.error("Error applying for course:", error.message);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
